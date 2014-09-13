@@ -8,7 +8,7 @@ module Pismo
   module Reader
     class Base
       attr_reader :raw_content, :doc, :content_candidates, :options
-
+      
       # Elements to keep for /input/ sanitization
       OK_ELEMENTS = %w{a td br th tbody table tr div span img strong em b i body html head title p h1 h2 h3 h4 h5 h6 pre code tt ul li ol blockquote font big small section article abbr audio video embed object cite dd dt figure caption sup form dl dt dd center}
 
