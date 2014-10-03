@@ -17,6 +17,7 @@ require 'pismo/reader/cluster'
 require 'pismo/images/image_extractor'
 require 'pismo/utilities'
 
+require 'open_uri_redirections'
 
 if RUBY_PLATFORM == "java"
   class String; def stem; self; end; end
