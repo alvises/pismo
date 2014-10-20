@@ -3,6 +3,7 @@ require 'pismo/internal_attributes'
 require 'pismo/external_attributes'
 
 require 'net/http'
+require 'uri'
 
 module Pismo
 
@@ -37,7 +38,7 @@ module Pismo
       @url = handle if handle =~ /\Ahttp/i
 
       @html = if handle =~ /\Ahttp/i
-                fetch @url
+                fetch(@url).body
               elsif handle.is_a?(StringIO) || handle.is_a?(IO) || handle.is_a?(Tempfile)
                 handle.read
               else
@@ -58,7 +59,7 @@ module Pismo
 
       url = URI.parse(uri_str)
       @url = uri_str
-      req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
+      req = Net::HTTP::Get.new(url.path)
       response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
       case response
       when Net::HTTPSuccess     then response
