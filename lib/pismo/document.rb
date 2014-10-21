@@ -38,7 +38,7 @@ module Pismo
       @url = handle if handle =~ /\Ahttp/i
 
       @html = if handle =~ /\Ahttp/i
-                fetch(@url).body
+                open(handle, allow_redirections: :all) { |f| @url = f.base_uri.to_s; f.read }
               elsif handle.is_a?(StringIO) || handle.is_a?(IO) || handle.is_a?(Tempfile)
                 handle.read
               else
@@ -53,19 +53,22 @@ module Pismo
       @doc.match([*args], all)
     end
 
-    def fetch(uri_str, limit = 20)
-      
-      raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+    
+    def fetch(uri_str, limit = 10)
+      # You should choose a better exception.
+      raise ArgumentError, 'too many HTTP redirects' if limit == 0
 
-      url = URI.parse(uri_str)
-      @url = uri_str
-      req = Net::HTTP::Get.new(url.path)
-      response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+      response = Net::HTTP.get_response(URI(uri_str))
+
       case response
-      when Net::HTTPSuccess     then response
-      when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+      when Net::HTTPSuccess then
+        response
+      when Net::HTTPRedirection then
+        location = response['location']
+        warn "redirected to #{location}"
+        fetch(location, limit - 1)
       else
-        response.error!
+        response.value
       end
     end
   

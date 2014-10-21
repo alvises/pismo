@@ -95,4 +95,12 @@ class PismoDocumentTest < Test::Unit::TestCase
     end
   end
 
+  context "The url is redirecting different times with a final empty url" do
+    setup do
+    end
+
+    should 'have as final url the final_url' do
+       @doc = Document.new @url
+    end
+  end
 end
